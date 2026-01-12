@@ -26,8 +26,7 @@ export class User
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.UUID,
       primaryKey: true,
     },
     name: {

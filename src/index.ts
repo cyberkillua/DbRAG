@@ -3,7 +3,7 @@ import { rateLimit } from "express-rate-limit";
 import cors from "cors";
 import noCache from "nocache";
 import helmet from "helmet";
-import { connectDatabase } from "./database/sequelize";
+import { connectDatabase } from "./database/sequelize.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
