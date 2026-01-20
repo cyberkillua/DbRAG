@@ -1,28 +1,31 @@
 export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("users", {
+  await queryInterface.createTable("orders", {
     id: {
       type: Sequelize.UUID,
       allowNull: false,
       primaryKey: true,
     },
-    name: {
+    userId: {
+      type: Sequelize.UUID,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+    productName: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    email: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    orderCount: {
+    quantity: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      defaultValue: 0,
     },
-    totalSpent: {
+    price: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      defaultValue: 0,
     },
     createdAt: {
       type: Sequelize.DATE,
@@ -38,5 +41,5 @@ export async function up(queryInterface, Sequelize) {
 }
 
 export async function down(queryInterface) {
-  await queryInterface.dropTable("users");
+  await queryInterface.dropTable("orders");
 }
