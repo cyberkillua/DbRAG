@@ -2,6 +2,8 @@
 import readline from "readline";
 import { connectDatabase } from "./database/sequelize";
 import { answerQuestion } from "./rag/pipeline";
+import { getFunctionCall } from "./agent/function-calling";
+import { dbTools, executeDatabaseFunction } from "./tools/database";
 
 async function main() {
   await connectDatabase();
@@ -18,17 +20,27 @@ async function main() {
         process.exit(0);
       }
 
-      console.log("\nSearching...");
-      const result = await answerQuestion(query);
+      try {
+        console.log("\nThinking...");
 
-      console.log(
-        result.success ? `\n✅ ${result.answer}` : `\n❌ ${result.error}`,
-      );
+        // 1. Get function call from LLM
+        const functionCall = await getFunctionCall(query, dbTools);
+        console.log("Function call:", functionCall);
 
+        // 2. Execute the database function
+        const result = await executeDatabaseFunction(
+          functionCall.name,
+          functionCall.arguments,
+        );
+
+        console.log("\nResult:", JSON.stringify(result, null, 2));
+      } catch (error: any) {
+        console.error("\n❌ Error:", error.message);
+      }
       askQuestion();
     });
   };
-
+  console.log("Welcome to the RAG CLI! Type your questions below.");
   askQuestion();
 }
 
